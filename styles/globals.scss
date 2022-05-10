@@ -31,6 +31,7 @@ body {
     $color-gradient-1,
     $color-gradient-2
   );
+  background-repeat: no-repeat;
   padding: 6rem 10rem;
 }
 
@@ -39,7 +40,39 @@ main {
   @include flex(space-between, center);
 
   & > * {
-    flex: 50%;
+    // flex: 50%;
     height: calc(100vh - 12rem);
+  }
+}
+
+@media (max-width: 770px) {
+  html {
+    font-size: 60%;
+  }
+
+  body {
+    padding: 4rem;
+  }
+
+  main {
+    & > * {
+      height: calc(100vh - 8rem);
+    }
+  }
+}
+
+@media (max-width: 770px) {
+  html {
+    font-size: 50%;
+  }
+
+  body {
+    padding: 2rem;
+  }
+
+  main {
+    & > * {
+      height: calc(100vh - 4rem);
+    }
   }
 }

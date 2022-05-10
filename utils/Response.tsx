@@ -1,9 +1,12 @@
-interface ResponseType {
-  message: String | String[];
+export interface ResponseInterface {
+  message: String[];
   options: String[];
 }
 
-export const Response = (res: String, question?: String): ResponseType => {
+export const Response = async (
+  res: String,
+  question?: String
+): Promise<ResponseInterface> => {
   switch (res) {
     case 'Want to know an interesting coding fact?': {
       const facts = [
@@ -31,30 +34,26 @@ export const Response = (res: String, question?: String): ResponseType => {
     case 'Know more about your favorite programming language': {
       const languages = ['Javascript', 'Java', 'Python', 'C / C++', 'Rust'];
 
-      return { message: 'Choose a language', options: languages };
+      return { message: ['Choose a language'], options: languages };
     }
     case 'Ask a question about any programming language': {
-      const resultsFunc = async () => {
-        const results = await fetch(
-          `http://api.serpstack.com/search?access_key=e21fd033ce284d9a0a72fc623fbf97f2&query=${question}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        ).then((res) => res.json());
-
-        if (results.request.search_url) {
-          return await results.request.search_url;
-        } else {
-          return 'www.google.com';
+      const results = await fetch(
+        `http://api.serpstack.com/search?access_key=e21fd033ce284d9a0a72fc623fbf97f2&query=${question}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         }
-      };
+      ).then((res) => res.json());
 
       return {
         message: [
-          `Click on the link to know more: ${resultsFunc}`,
+          `Click on the link to know more: <a href=${
+            results.request.search_url
+          } target='_blank'>${
+            results.request.search_url ? results.request.search_url : ''
+          }</a>`,
           'Do you wanna continue?',
         ],
         options: ['Yes', 'No'],
@@ -64,7 +63,7 @@ export const Response = (res: String, question?: String): ResponseType => {
       return {
         message: [
           `
-        JavaScript (JS) is a lightweight, interpreted, or just-in-time compiled programming language with first-class functions. While it is most well-known as the scripting language for Web pages, many non-browser environments also use it, such as Node.js, Apache CouchDB and Adobe Acrobat. JavaScript is a prototype-based, multi-paradigm, single-threaded, dynamic language, supporting object-oriented, imperative, and declarative (e.g. functional programming) styles. Read more about JavaScript.
+        JavaScript (JS) is a lightweight, interpreted, or just-in-time compiled programming language with first-class functions.
         `,
           'JavaScript took just 10 days to develop.',
           'JavaScript was probably named after Java.',
@@ -79,7 +78,7 @@ export const Response = (res: String, question?: String): ResponseType => {
       return {
         message: [
           `
-          Java is a high-level, class-based, object-oriented programming language that is designed to have as few implementation dependencies as possible. It is a general-purpose programming language intended to let programmers write once, run anywhere (WORA), meaning that compiled Java code can run on all platforms that support Java without the need to recompile.
+          Java is a high-level, class-based, object-oriented programming language. It is a general-purpose programming language intended to let programmers write once, run anywhere (WORA), meaning that compiled Java code can run on all platforms that support Java without the need to recompile.
         `,
           'Java was called Oak at the beginning.',
           'It was just an accident!',
@@ -94,8 +93,7 @@ export const Response = (res: String, question?: String): ResponseType => {
       return {
         message: [
           `
-          Python is a high-level, interpreted, general-purpose programming language. Its design philosophy emphasizes code readability with the use of significant indentation.
-          Python is dynamically-typed and garbage-collected. It supports multiple programming paradigms, including structured (particularly procedural), object-oriented and functional programming. It is often described as a "batteries included" language due to its comprehensive standard library.
+          Python is a high-level, interpreted, general-purpose programming language. Python is dynamically-typed and garbage-collected. It supports multiple programming paradigms.
         `,
           'Python follows chain comparison.',
           'Functions in Python can return multiple values.',
@@ -110,12 +108,9 @@ export const Response = (res: String, question?: String): ResponseType => {
       return {
         message: [
           `
-          C is a general-purpose computer programming language. It was created in the 1970s by Dennis Ritchie, and remains very widely used and influential. By design, C's features cleanly reflect the capabilities of the targeted CPUs. It has found lasting use in operating systems, device drivers, protocol stacks, though decreasingly for application software, and is common in computer architectures that range from the largest supercomputers to the smallest microcontrollers and embedded systems.
+          C is a general-purpose computer programming language. It was created in the 1970s by Dennis Ritchie.
         `,
-          'C++ (/ˌsiːˌplʌsˈplʌs/) is a general-purpose programming language created by Danish computer scientist Bjarne Stroustrup as an extension of the C programming language, or "C with Classes". The language has expanded significantly over time, and modern C++ now has object-oriented, generic, and functional features in addition to facilities for low-level memory manipulation.',
-          'C Language was not called C at the beginning. It has been named as C after passing many stages of evolution.',
-          'We can ignore input in scanf() by using an ‘*’ after ‘%’ in format specifiers.',
-          'C++ Influenced Many Other Programming Languages.',
+          'C++ is a general-purpose programming language created by Danish computer scientist Bjarne Stroustrup as an extension of the C programming language, or "C with Classes".',
           'C++ was First Standardized in 1998.',
         ],
         options: ['Yes', 'No'],
@@ -125,7 +120,7 @@ export const Response = (res: String, question?: String): ResponseType => {
       return {
         message: [
           `
-          Rust is a multi-paradigm, general-purpose programming language designed for performance and safety, especially safe concurrency. It is syntactically similar to C++, but can guarantee memory safety by using a borrow checker to validate references. It achieves memory safety without garbage collection, and reference counting is optional. It is a systems programming language with mechanisms for low-level memory management, but also offers high-level features such as functional programming.
+          Rust is a multi-paradigm, general-purpose programming language designed for performance and safety, especially safe concurrency.
         `,
           'Rust Is Fast.',
           'Documentation is critical for adoption.',
@@ -135,9 +130,9 @@ export const Response = (res: String, question?: String): ResponseType => {
         options: ['Yes', 'No'],
       };
     }
-    case 'Yes' || 'No': {
+    case 'Yes': {
       return {
-        message: '',
+        message: ['Choose any one of the options below'],
         options: [
           'Want to know an interesting coding fact?',
           'Know more about your favorite programming language',
@@ -145,9 +140,18 @@ export const Response = (res: String, question?: String): ResponseType => {
         ],
       };
     }
+    case 'No': {
+      return {
+        message: ['Hope I was of some help to you', 'Visit Again'],
+        options: [],
+      };
+    }
     default:
       return {
-        message: `Hi ${res}! Hope you have a great day!`,
+        message: [
+          `Hi ${res}! Hope you have a great day!`,
+          'Choose any one of the options below',
+        ],
         options: [
           'Want to know an interesting coding fact?',
           'Know more about your favorite programming language',
