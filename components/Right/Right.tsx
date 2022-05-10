@@ -54,16 +54,30 @@ export const Right: NextPage = () => {
       currentMessage === 'Ask a question about any programming language'
     ) {
       setLoading(true);
-      const { message, options }: ResponseInterface = await Response(
-        'Ask a question about any programming language',
-        inputRef.current.value
-      );
-      if (message && options) {
+      try {
+        const { message, options }: ResponseInterface = await Response(
+          'Ask a question about any programming language',
+          inputRef.current.value
+        );
+        if (message && options) {
+          setLoading(false);
+          setDisableInp(true);
+          setCurrentMessage(inputRef.current.value);
+          setOptions(options);
+          setList([...list, inputRef.current.value, ...message]);
+          inputRef.current.value = '';
+          return;
+        }
+      } catch (err) {
         setLoading(false);
         setDisableInp(true);
         setCurrentMessage(inputRef.current.value);
         setOptions(options);
-        setList([...list, inputRef.current.value, ...message]);
+        setList([
+          ...list,
+          inputRef.current.value,
+          "couldn't connect to the services",
+        ]);
         inputRef.current.value = '';
         return;
       }
