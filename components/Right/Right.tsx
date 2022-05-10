@@ -3,20 +3,12 @@ import {
   Button,
   Dialog,
   Text,
-  TextInput,
-  Group,
-  Paper,
   AppShell,
-  Navbar,
   Header,
   Footer,
-  Avatar,
-  MantineProvider,
   UnstyledButton,
-  CloseButton,
   Tooltip,
   Input,
-  ThemeIcon,
   MediaQuery,
   Loader,
 } from '@mantine/core';
@@ -26,7 +18,7 @@ import parse from 'html-react-parser';
 import styles from './Right.module.scss';
 import Bot from '../../public/bot.png';
 import Image from 'next/image';
-import { Menu, Menu2, MessageCircle, Robot, Send, X } from 'tabler-icons-react';
+import { MessageCircle, Robot, Send, X } from 'tabler-icons-react';
 import { Response, ResponseInterface } from '../../utils/Response';
 
 export const Right: NextPage = () => {
@@ -72,7 +64,7 @@ export const Right: NextPage = () => {
         setLoading(false);
         setDisableInp(true);
         setCurrentMessage(inputRef.current.value);
-        setOptions(options);
+        setOptions(['Yes', 'No']);
         setList([
           ...list,
           inputRef.current.value,
